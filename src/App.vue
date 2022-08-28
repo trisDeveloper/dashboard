@@ -21,6 +21,6 @@ export default {
 </script>
 <style lang="scss" scoped>
 .v-main {
-  margin-left: 60px;
+  margin-top: 40px;
 }
 </style>

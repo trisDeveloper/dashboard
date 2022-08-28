@@ -155,11 +155,8 @@ export default {
 </script>
 <style scoped lang="scss">
 .fill-height {
-  height: 50%;
-  position: absolute;
-  width: 50%;
-  bottom: 0;
-  right: 0;
+  height: 350px;
+  width: 400px;
   margin: 10px;
   border: 1px solid #ccc;
   overflow: auto;

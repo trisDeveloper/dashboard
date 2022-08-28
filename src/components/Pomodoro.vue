@@ -189,12 +189,9 @@ export default {
 <style lang="scss" scoped>
 .pomorodo {
   margin: 10px;
-  height: 30%;
   width: 300px;
-  position: absolute;
-  right: 0;
+  height: 300px;
   border: 1px solid#ccc;
-  bottom: calc(50% + 20px);
   padding: 10px;
 }
 .v-form {
