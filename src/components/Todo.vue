@@ -71,7 +71,7 @@
       <!-- to do lists-->
       <v-slide-x-transition group>
         <v-timeline-item
-          v-for="event in events"
+          v-for="(event, index) in events"
           :key="event.id"
           class="mb-4"
           :color="event.color"
@@ -104,25 +104,35 @@
                 <v-toolbar :color="event.color" dark>
                   <v-toolbar-title v-html="event.start"></v-toolbar-title>
                   <v-spacer></v-spacer>
-                  <v-btn icon>
+                  <v-btn icon v-on:click="deleted(index)">
                     <v-icon>mdi-trash-can-outline</v-icon>
-                  </v-btn>
-                  <v-btn icon>
-                    <v-icon>mdi-dots-vertical</v-icon>
                   </v-btn>
                 </v-toolbar>
                 <v-card-text>
-                  <span
+                  <textarea
                     :style="{
-                      fontSize: '17px',
+                      fontSize: '18px',
                       color: '#000',
-                      padding: '10px',
+                      width: '100%',
+                      height: '130px',
+                      resize: 'none',
+                      overflow: 'auto',
+                      outline: 'none !important',
                     }"
-                    v-html="event.name"
-                  ></span>
+                    v-model="event.newname"
+                  ></textarea>
                 </v-card-text>
                 <v-card-actions>
-                  <v-btn text color="secondary" @click="event.dialog = false">
+                  <v-btn text :color="event.color" @click="checknewname(event)">
+                    Ok
+                  </v-btn>
+                  <v-btn
+                    text
+                    color="secondary"
+                    @click="
+                      (event.dialog = false), (event.newname = event.name)
+                    "
+                  >
                     Cancel
                   </v-btn>
                 </v-card-actions>
@@ -158,20 +168,11 @@
 <script>
 export default {
   data: () => ({
-    events: [
-      {
-        name: "eat breakfast with jenny and play around and do some code",
-        start: "08:00",
-        end: "2022-08-10T09:00:00",
-        color: "purple",
-        active: false,
-        dialog: false,
-      },
-    ],
+    events: [],
     add: null,
     time: "00:00",
 
-    color: "green",
+    colors: ["blue", "green", "orange", "pink", "purple"],
     modal2: false,
     snackbar: false,
     timeout: 3000,
@@ -194,9 +195,9 @@ export default {
         this.events.push({
           id: this.nonce++,
           name: this.add,
+          newname: this.add,
           start: this.time,
-          day: this.day,
-          color: this.color,
+          color: this.colors[Math.floor(Math.random() * 5)],
           done: false,
           dialog: false,
         });
@@ -212,6 +213,17 @@ export default {
     },
     checking() {
       localStorage.setItem("events", JSON.stringify(this.events));
+    },
+    deleted(index) {
+      this.events.splice(index, 1);
+      localStorage.setItem("events", JSON.stringify(this.events));
+    },
+    checknewname(event) {
+      if (event.newname) {
+        (event.dialog = false), (event.name = event.newname), this.checking();
+      } else {
+        this.snackbar = true;
+      }
     },
   },
 };
