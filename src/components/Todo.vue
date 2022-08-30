@@ -14,7 +14,7 @@
         <v-text-field
           v-model="add"
           hide-details="auto"
-          placeholder="Will you do something new..."
+          placeholder="I am gonna do..."
           @keydown.enter="comment"
           class="add-input"
         ></v-text-field>
@@ -201,6 +201,9 @@ export default {
           done: false,
           dialog: false,
         });
+        this.events = this.events.sort((a, b) =>
+          a.start > b.start ? 1 : b.start > a.start ? -1 : 0
+        );
         localStorage.setItem("events", JSON.stringify(this.events));
         localStorage.setItem("nonced", JSON.stringify(this.nonce));
         this.add = null;
@@ -208,9 +211,7 @@ export default {
         this.snackbar = true;
       }
     },
-    change() {
-      window.prompt("do you wanna change?", "yes");
-    },
+
     checking() {
       localStorage.setItem("events", JSON.stringify(this.events));
     },
