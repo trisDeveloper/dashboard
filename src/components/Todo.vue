@@ -137,20 +137,6 @@
                   </v-btn>
                 </v-card-actions>
               </v-card>
-
-              <!-- <v-card-text>
-                  
-                </v-card-text>
-
-                <v-divider></v-divider>
-
-                <v-card-actions>
-                  <v-spacer></v-spacer>
-                  <v-btn color="primary" text @click="dialog = false">
-                    I accept
-                  </v-btn>
-                </v-card-actions>
-              </v-card> -->
             </v-dialog>
             <div class="checkbox">
               <v-checkbox

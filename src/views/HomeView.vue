@@ -2,7 +2,7 @@
   <div class="main">
     <Todo />
     <Pomodoro />
-    <!-- <Widget /> -->
+    <Weather />
     <!-- <Resources /> -->
     <!-- <Notes /> -->
     <Calendar />
@@ -10,6 +10,7 @@
 </template>
 
 <script>
+import Weather from "../components/Weather";
 import Todo from "../components/Todo";
 import Calendar from "../components/Calendar";
 import Pomodoro from "../components/Pomodoro";
@@ -20,6 +21,7 @@ export default {
     Calendar,
     Pomodoro,
     Todo,
+    Weather,
   },
 };
 </script>
