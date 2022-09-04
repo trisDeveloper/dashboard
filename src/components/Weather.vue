@@ -21,13 +21,20 @@
           </template>
 
           <v-card>
-            <v-card-text>
-              <v-text-field
-                label="select country"
+            <v-card-text :style="{ paddingTop: '15px' }">
+              <v-autocomplete
                 v-model="query"
+                :loading="loading"
+                :items="items"
+                :search-input.sync="search"
+                cache-items
+                flat
                 @keypress="fetchWeather()"
-                placeholder="Search for a city or state"
-              ></v-text-field>
+                hide-no-data
+                hide-details
+                label="select country"
+                solo-inverted
+              ></v-autocomplete>
               <!-- <ul>
                 <li v-for="(result, i) in searchResults" :key="i">
                   {{ result }} // list of all places
@@ -85,24 +92,95 @@ export default {
       api_key: "4849d7f573b8780cce0737107633f37c",
       url_base: "https://api.openweathermap.org/data/2.5/",
       query: "",
+      loading: false,
+      items: [],
+      search: null,
+      states: [
+        "Alabama",
+        "Alaska",
+        "American Samoa",
+        "Arizona",
+        "Arkansas",
+        "California",
+        "Colorado",
+        "Connecticut",
+        "Delaware",
+        "District of Columbia",
+        "Federated States of Micronesia",
+        "Florida",
+        "Georgia",
+        "Guam",
+        "Hawaii",
+        "Idaho",
+        "Illinois",
+        "Indiana",
+        "Iowa",
+        "Kansas",
+        "Kentucky",
+        "Louisiana",
+        "Maine",
+        "Marshall Islands",
+        "Maryland",
+        "Massachusetts",
+        "Michigan",
+        "Minnesota",
+        "Mississippi",
+        "Missouri",
+        "Montana",
+        "Nebraska",
+        "Nevada",
+        "New Hampshire",
+        "New Jersey",
+        "New Mexico",
+        "New York",
+        "North Carolina",
+        "North Dakota",
+        "Northern Mariana Islands",
+        "Ohio",
+        "Oklahoma",
+        "Oregon",
+        "Palau",
+        "Pennsylvania",
+        "Puerto Rico",
+        "Rhode Island",
+        "South Carolina",
+        "South Dakota",
+        "Tennessee",
+        "Texas",
+        "Utah",
+        "Vermont",
+        "Virgin Island",
+        "Virginia",
+        "Washington",
+        "West Virginia",
+        "Wisconsin",
+        "Wyoming",
+      ],
       weather: { name: "" },
+      timeout: 3500,
     };
   },
   created() {
-    this.weather = JSON.parse(localStorage.getItem("weather") || this.weather);
+    this.weather = JSON.parse(localStorage.getItem("weather")) || this.weather;
   },
-
+  watch: {
+    search(val) {
+      val && val !== this.select && this.querySelections(val);
+    },
+  },
   mounted() {
     this.interval = setInterval(() => {
       const date = new Date();
       this.hours = date.getHours();
       this.minutes = date.getMinutes();
       this.day =
-        date.toLocaleDateString("en-US", { weekday: "long" }) +
-        ", " +
+        date.toLocaleDateString("en-US", { weekday: "short" }) +
+        " " +
         date.toLocaleDateString("en-US", { day: "numeric" }) +
         " " +
-        date.toLocaleDateString("en-US", { month: "short" });
+        date.toLocaleDateString("en-US", { month: "short" }) +
+        " " +
+        date.toLocaleDateString("en-US", { year: "numeric" });
     }, 1000);
     this.weatherinterval = setInterval(() => {
       this.saveWeather(); ///// 29 new york
@@ -123,16 +201,24 @@ export default {
         this.snackbar = true;
       }
     },
-    fetchWeather(e) {
-      if (e.key == "Enter") {
-        this.saveWeather();
-      }
+    fetchWeather() {
+      this.saveWeather();
     },
     checking() {
       localStorage.setItem("weather", JSON.stringify(this.weather));
     },
     setResults(results) {
       this.weather = results;
+    },
+    querySelections(v) {
+      this.loading = true;
+      // Simulated ajax query
+      setTimeout(() => {
+        this.items = this.states.filter((e) => {
+          return (e || "").toLowerCase().indexOf((v || "").toLowerCase()) > -1;
+        });
+        this.loading = false;
+      }, 500);
     },
   },
 };
@@ -184,8 +270,8 @@ export default {
       color: #666;
     }
   }
-  .v-card::v-deep .v-card__text {
-    padding: 24px 20px;
+  .v-card {
+    padding: 20px;
   }
 }
 </style>

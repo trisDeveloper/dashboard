@@ -3,7 +3,7 @@
     <Todo />
     <Pomodoro />
     <Weather />
-    <!-- <Resources /> -->
+    <Shortlinks />
     <!-- <Notes /> -->
     <Calendar />
   </div>
@@ -14,6 +14,7 @@ import Weather from "../components/Weather";
 import Todo from "../components/Todo";
 import Calendar from "../components/Calendar";
 import Pomodoro from "../components/Pomodoro";
+import Shortlinks from "../components/Shortlinks";
 export default {
   name: "Home",
 
@@ -22,6 +23,7 @@ export default {
     Pomodoro,
     Todo,
     Weather,
+    Shortlinks,
   },
 };
 </script>

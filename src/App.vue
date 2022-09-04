@@ -20,7 +20,11 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+.v-app {
+  max-width: 1440px;
+}
 .v-main {
   margin-top: 40px;
+  max-width: 1140px;
 }
 </style>

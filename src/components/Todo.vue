@@ -171,8 +171,8 @@ export default {
     },
   },
   created() {
-    this.events = JSON.parse(localStorage.getItem("events") || this.events);
-    this.nonce = JSON.parse(localStorage.getItem("nonced") || this.nonce);
+    this.events = JSON.parse(localStorage.getItem("events")) || this.events;
+    this.nonce = JSON.parse(localStorage.getItem("nonced")) || this.nonce;
   },
 
   methods: {
