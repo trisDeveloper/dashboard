@@ -1,6 +1,41 @@
 <template>
-  <div class="widget">
+  <div
+    class="widget"
+    :style="
+      hours >= 5 && hours < 18
+        ? { backgroundImage: `url('${morningsky}')` }
+        : { backgroundImage: `url('${nightsky}')` }
+    "
+  >
+    <!-- :style="{minutes > 34 ? backgroundImage: 'url('+ morningsky +')' : backgroundImage: 'url('+ nightsky +')' }" -->
+
     <div class="weather">
+      <div class="desc" v-if="weather.main != undefined">
+        {{ weather.weather[0].description }}
+      </div>
+      <div class="degree" v-if="weather.main != undefined">
+        <div class="img">
+          <img
+            :src="
+              'http://openweathermap.org/img/wn/' +
+              weather.weather[0].icon +
+              '.png'
+            "
+            alt=""
+          />
+        </div>
+        <div class="deg">{{ Math.round(weather.main.temp) }}°c</div>
+      </div>
+    </div>
+    <div class="time">
+      <div class="clock">
+        {{ 10 > hours ? "0" + hours : hours }}:{{
+          10 > minutes ? "0" + minutes : minutes
+        }}
+      </div>
+      <div class="day">
+        {{ day }}
+      </div>
       <div class="city">
         <v-snackbar v-model="snackbar" :timeout="timeout">
           You should type something
@@ -14,9 +49,11 @@
         <v-dialog v-model="dialog" width="500">
           <template v-slot:activator="{ on, attrs }">
             <div v-bind="attrs" v-on="on">
-              {{ weather.main ? weather.name : "city" }},
-              {{ weather.main ? weather.sys.country : "country"
-              }}<v-icon>mdi-map-marker</v-icon>
+              {{ weather.main ? weather.name : "city"
+              }}<v-icon
+                :style="{ color: 'white', fontSize: '18px', bottom: '2px' }"
+                >mdi-map-marker</v-icon
+              >
             </div>
           </template>
 
@@ -55,30 +92,14 @@
           </v-card>
         </v-dialog>
       </div>
-      <div class="desc" v-if="weather.main != undefined">
-        {{ weather.weather[0].description }}
-      </div>
-      <div class="degree" v-if="weather.main != undefined">
-        <div class="img"></div>
-        <div class="deg">{{ Math.round(weather.main.temp) }}°c</div>
-      </div>
-    </div>
-    <div class="time">
-      <div class="clock">
-        {{ 10 > hours ? "0" + hours : hours }}:{{
-          10 > minutes ? "0" + minutes : minutes
-        }}
-      </div>
-      <div class="day">
-        {{ day }}
-      </div>
     </div>
   </div>
 </template>
 
 <script>
-// //4849d7f573b8780cce0737107633f37c
-
+//4849d7f573b8780cce0737107633f37c
+import morningsky from "./../assets/skymorning.png";
+import nightsky from "./../assets/nightsky.png";
 export default {
   data() {
     return {
@@ -93,6 +114,8 @@ export default {
       url_base: "https://api.openweathermap.org/data/2.5/",
       query: "",
       loading: false,
+      morningsky,
+      nightsky,
       items: [],
       search: null,
       states: [
@@ -156,7 +179,7 @@ export default {
         "Wisconsin",
         "Wyoming",
       ],
-      weather: { name: "" },
+      weather: { name: "", icon: "" },
       timeout: 3500,
     };
   },
@@ -228,47 +251,67 @@ export default {
 .widget {
   display: flex;
   flex-wrap: nowrap;
-  height: 150px;
+  height: 120px;
   max-width: 350px;
   min-width: 260px;
+  border-radius: 8px;
   justify-content: space-between;
+  background-image: url("./../assets/skymorning.png");
+  background-position: bottom;
+  background-size: cover;
+  background-repeat: no-repeat;
   margin: 10px;
+  color: white;
+  transition: all 1s;
+  text-shadow: 0 0 3px #00467eb0;
   padding: 10px;
-  border: 1px solid #ccc;
   .time {
     min-width: 40%;
     padding: 0 0 0 10px;
     text-align: right;
     .clock {
-      font-size: 45px;
-      font-weight: bold;
+      font-size: 37px;
+      font-weight: 500;
+      transform: translateY(-6px);
+      height: 40px;
     }
     .day {
-      font-size: 14px;
-      color: #666;
-      padding: 0 5px;
+      font-size: 13px;
+      color: #ffffff;
+      font-weight: 500;
+      padding: 3px 3px 8px 3px;
     }
   }
   .weather {
     min-width: 50%;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
     .degree {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
       padding-left: 5px;
+      .img {
+        width: 60px;
+        order: 2;
+        img {
+          width: 60px;
+        }
+      }
       .deg {
-        font-size: 45px;
-        font-weight: bold;
+        font-size: 30px;
+        font-weight: 500;
       }
     }
     .desc {
       padding-left: 5px;
+      font-weight: 500;
     }
-    .city {
-      padding-left: 5px;
-      font-size: 15px;
-      color: #666;
-    }
+  }
+  .city {
+    padding-left: 5px;
+    font-size: 14px;
+    color: #ffffff;
   }
   .v-card {
     padding: 20px;

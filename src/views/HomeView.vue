@@ -4,13 +4,14 @@
     <Pomodoro />
     <Weather />
     <Shortlinks />
-    <!-- <Notes /> -->
+    <Player />
     <Calendar />
   </div>
 </template>
 
 <script>
 import Weather from "../components/Weather";
+import Player from "../components/Player";
 import Todo from "../components/Todo";
 import Calendar from "../components/Calendar";
 import Pomodoro from "../components/Pomodoro";
@@ -20,6 +21,7 @@ export default {
 
   components: {
     Calendar,
+    Player,
     Pomodoro,
     Todo,
     Weather,

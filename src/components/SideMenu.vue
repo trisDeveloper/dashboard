@@ -9,7 +9,7 @@
         <router-link to="/profile">
           <v-list-item-avatar>
             <v-img
-              src="https://randomuser.me/api/portraits/women/18.jpg"
+              src="https://randomuser.me/api/portraits/women/19.jpg"
             ></v-img>
           </v-list-item-avatar>
         </router-link>
