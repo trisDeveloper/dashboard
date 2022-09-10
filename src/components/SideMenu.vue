@@ -48,7 +48,7 @@ export default {
         { title: "Home", icon: "mdi-view-dashboard", link: "/" },
         { title: "Work", icon: "mdi-domain", link: "/work" },
       ],
-      username: "Takoua Bouden",
+      username: "Tris dev",
     };
   },
 };
