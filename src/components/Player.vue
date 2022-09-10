@@ -1,6 +1,6 @@
 <template>
   <iframe
-    style="border-radius: 12px"
+    style="border-radius: 8px"
     src="https://open.spotify.com/embed/playlist/1LJzv7HlPZOtKXhTEsZFrn?utm_source=generator"
     width="350"
     height="80"

@@ -37,11 +37,15 @@
         {{ day }}
       </div>
       <div class="city">
-        <v-snackbar v-model="snackbar" :timeout="timeout">
+        <v-snackbar
+          v-model="snackbar"
+          :style="{ textShadow: 'none' }"
+          :timeout="timeout"
+        >
           You should type something
 
           <template v-slot:action="{ attrs }">
-            <v-btn color="red" text v-bind="attrs" @click="snackbar = false">
+            <v-btn color="blue" text v-bind="attrs" @click="snackbar = false">
               Close
             </v-btn>
           </template>
@@ -59,24 +63,25 @@
 
           <v-card>
             <v-card-text :style="{ paddingTop: '15px' }">
-              <v-autocomplete
+              <v-text-field
                 v-model="query"
-                :loading="loading"
-                :items="items"
-                :search-input.sync="search"
-                cache-items
-                flat
                 @keypress="fetchWeather()"
-                hide-no-data
-                hide-details
+                @input="citysearch"
+                outlined
+                placeholder="search for city..."
                 label="select country"
-                solo-inverted
-              ></v-autocomplete>
-              <!-- <ul>
-                <li v-for="(result, i) in searchResults" :key="i">
-                  {{ result }} // list of all places
-                </li>
-              </ul> -->
+              ></v-text-field>
+              <template v-for="(result, index) in searchResults">
+                <v-list-item
+                  :style="{ borderBottom: '1px solid #eee' }"
+                  @click="query = result.place_name.split(', ')[0]"
+                  :key="index"
+                >
+                  <v-list-item-content>
+                    {{ result.place_name }}
+                  </v-list-item-content>
+                </v-list-item>
+              </template>
             </v-card-text>
 
             <v-card-actions>
@@ -98,6 +103,7 @@
 
 <script>
 //4849d7f573b8780cce0737107633f37c
+import axios from "axios";
 import morningsky from "./../assets/skymorning.png";
 import nightsky from "./../assets/nightsky.png";
 export default {
@@ -116,69 +122,7 @@ export default {
       loading: false,
       morningsky,
       nightsky,
-      items: [],
-      search: null,
-      states: [
-        "Alabama",
-        "Alaska",
-        "American Samoa",
-        "Arizona",
-        "Arkansas",
-        "California",
-        "Colorado",
-        "Connecticut",
-        "Delaware",
-        "District of Columbia",
-        "Federated States of Micronesia",
-        "Florida",
-        "Georgia",
-        "Guam",
-        "Hawaii",
-        "Idaho",
-        "Illinois",
-        "Indiana",
-        "Iowa",
-        "Kansas",
-        "Kentucky",
-        "Louisiana",
-        "Maine",
-        "Marshall Islands",
-        "Maryland",
-        "Massachusetts",
-        "Michigan",
-        "Minnesota",
-        "Mississippi",
-        "Missouri",
-        "Montana",
-        "Nebraska",
-        "Nevada",
-        "New Hampshire",
-        "New Jersey",
-        "New Mexico",
-        "New York",
-        "North Carolina",
-        "North Dakota",
-        "Northern Mariana Islands",
-        "Ohio",
-        "Oklahoma",
-        "Oregon",
-        "Palau",
-        "Pennsylvania",
-        "Puerto Rico",
-        "Rhode Island",
-        "South Carolina",
-        "South Dakota",
-        "Tennessee",
-        "Texas",
-        "Utah",
-        "Vermont",
-        "Virgin Island",
-        "Virginia",
-        "Washington",
-        "West Virginia",
-        "Wisconsin",
-        "Wyoming",
-      ],
+      searchResults: [],
       weather: { name: "", icon: "" },
       timeout: 3500,
     };
@@ -186,11 +130,7 @@ export default {
   created() {
     this.weather = JSON.parse(localStorage.getItem("weather")) || this.weather;
   },
-  watch: {
-    search(val) {
-      val && val !== this.select && this.querySelections(val);
-    },
-  },
+
   mounted() {
     this.interval = setInterval(() => {
       const date = new Date();
@@ -233,15 +173,22 @@ export default {
     setResults(results) {
       this.weather = results;
     },
-    querySelections(v) {
-      this.loading = true;
+    citysearch() {
       // Simulated ajax query
-      setTimeout(() => {
-        this.items = this.states.filter((e) => {
-          return (e || "").toLowerCase().indexOf((v || "").toLowerCase()) > -1;
-        });
-        this.loading = false;
-      }, 500);
+      setTimeout(async () => {
+        if (this.query !== "") {
+          try {
+            const result = await axios.get(
+              `https://api.mapbox.com/geocoding/v5/mapbox.places/${this.query}.json?access_token=pk.eyJ1IjoibGV0aGFsaGFyZDQwNCIsImEiOiJjbDd1b3ptZ2wwMG0xM3Bxa3c4MzA4bHNuIn0.FCDPDeDAYmaSMDTn6TrHUw&types=place`
+            );
+            this.searchResults = result.data.features;
+          } catch {
+            this.snackbar = true;
+          }
+          return;
+        }
+        this.query = null;
+      }, 300);
     },
   },
 };
@@ -251,7 +198,7 @@ export default {
 .widget {
   display: flex;
   flex-wrap: nowrap;
-  height: 120px;
+  height: 115px;
   max-width: 350px;
   min-width: 260px;
   border-radius: 8px;

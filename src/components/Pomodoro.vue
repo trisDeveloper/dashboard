@@ -12,6 +12,8 @@
             :rules="focusrules"
             label="Focus"
             required
+            outlined
+            dense
           ></v-text-field>
 
           <v-text-field
@@ -22,6 +24,8 @@
             :rules="restrules"
             label="Rest"
             required
+            outlined
+            dense
           ></v-text-field>
           <v-text-field
             class="inp"
@@ -32,12 +36,14 @@
             :rules="longrestrules"
             label="Long rest"
             required
+            outlined
+            dense
           ></v-text-field>
           <v-btn
             class="ma-2 start"
             outlined
             :disabled="!valid"
-            color="indigo"
+            color="#f44336"
             @click="validate(), (e1 = 2)"
           >
             Start
@@ -45,37 +51,40 @@
         </v-form>
       </v-stepper-content>
       <v-stepper-content :style="{ padding: '5px' }" step="2">
-        <v-progress-circular
-          :rotate="-90"
-          :size="130"
-          :width="5"
-          :value="value"
-          color="indigo"
-        >
-          <div class="flex-session">
-            <div class="session">{{ label }}</div>
-            <div>
-              {{ 10 > minutes ? "0" + minutes : minutes }} :
-              {{ 10 > seconds ? "0" + seconds : seconds }}
+        <div class="prog">
+          <v-progress-circular
+            :rotate="-90"
+            :size="130"
+            :width="5"
+            :value="value"
+            color="#f44336"
+          >
+            <div class="flex-session">
+              <div class="session">{{ label }}</div>
+              <div>
+                {{ 10 > minutes ? "0" + minutes : minutes }} :
+                {{ 10 > seconds ? "0" + seconds : seconds }}
+              </div>
             </div>
+          </v-progress-circular>
+          <div class="progress">
+            <v-btn icon @click="reseted" color="secondry">
+              <v-icon>mdi-cached</v-icon>
+            </v-btn>
+            <v-btn icon @click="play = !play" color="secondry">
+              <v-icon>{{ play ? "mdi-pause" : "mdi-play-outline" }}</v-icon>
+            </v-btn>
+            <v-btn @click="canceld" icon color="secondry">
+              <v-icon>mdi-trash-can-outline</v-icon>
+            </v-btn>
           </div>
-        </v-progress-circular>
-        <div class="progress">
-          <v-btn icon @click="reseted" color="secondry">
-            <v-icon>mdi-cached</v-icon>
-          </v-btn>
-          <v-btn icon @click="play = !play" color="secondry">
-            <v-icon>{{ play ? "mdi-pause" : "mdi-play-outline" }}</v-icon>
-          </v-btn>
-          <v-btn @click="canceld" icon color="secondry">
-            <v-icon>mdi-trash-can-outline</v-icon>
-          </v-btn>
         </div>
       </v-stepper-content>
     </v-stepper-items>
   </v-stepper>
 </template>
 <script>
+import beepvoice from "./../assets/so-proud-notification.mp3";
 export default {
   data() {
     return {
@@ -99,22 +108,24 @@ export default {
       minutes: 0,
       seconds: 0,
       session1: 0,
+      beep: new Audio(beepvoice),
+      notification: null,
       label: "",
       play: true,
       focusrules: [
         (value) => !!value || "Required.",
         (value) => value <= 60 || "Max 120 minutes",
-        (value) => value >= 25 || "Min 25 minutes",
+        (value) => value >= 1 || "Min 25 minutes",
       ],
       restrules: [
         (value) => !!value || "Required.",
         (value) => value <= 15 || "Max 15 minutes",
-        (value) => value >= 3 || "Min 3 minutes",
+        (value) => value >= 1 || "Min 3 minutes",
       ],
       longrestrules: [
         (value) => !!value || "Required.",
         (value) => value <= 60 || "Max 120 minutes",
-        (value) => value >= 10 || "Min 10 minutes",
+        (value) => value >= 1 || "Min 10 minutes",
       ],
     };
   },
@@ -134,17 +145,30 @@ export default {
     },
     validate() {
       this.$refs.form.validate();
+      Notification.requestPermission();
       this.valid ? this.focusing() : (this.e1 = 1);
+    },
+    setnotification(done, next) {
+      this.notification = new Notification("Pomodoro", {
+        body: `${done} session is over it's time to ${next}`,
+      });
+      this.notification.onclick = () => {
+        window.focus();
+      };
     },
     setNextStep() {
       if (this.label === "Focus" && this.session1 < 3) {
+        this.setnotification("Focus", "take a short rest");
         this.shortresting();
         this.session1++;
       } else if (this.label === "Rest") {
+        this.setnotification("Rest", "focus");
         this.focusing();
       } else if (this.label === "Focus" && this.session1 === 3) {
+        this.setnotification("Focus", "take a long rest");
         this.longresting();
       } else if (this.label === "Long Rest") {
+        this.setnotification("Long Rest", "focus");
         this.focusing();
       }
     },
@@ -154,12 +178,13 @@ export default {
         if (this.play === true) {
           this.timer--;
         }
-        this.minutes = this.timer / 60 - (this.timer % 60) / 60;
+        this.minutes = Math.ceil(this.timer / 60 - (this.timer % 60) / 60);
         this.seconds = this.timer % 60;
         this.value = this.timer / ((session * 60) / 100);
         if (this.timer === 0) {
           clearInterval(this.interval);
           this.setNextStep();
+          this.beep.play();
         }
       }, 1000);
     },
@@ -187,34 +212,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.v-stepper,
+.v-sheet {
+  box-shadow: none !important;
+  border-radius: 0px !important;
+}
 .pomorodo {
   margin: 10px;
-  width: 300px;
-  height: 300px;
+  max-width: 100%;
+  height: 250px;
   border: 1px solid#ccc;
   padding: 10px;
 }
 .v-form {
   width: 100%;
   display: flex;
-  height: 70%;
+  min-height: 110px;
+  gap: 5px;
   align-items: center;
   .inp {
     width: 30%;
-    padding: 10px 8px;
-    position: relative;
-  }
-  input {
-    max-width: 100%;
-    border: 1px solid #e1e1e1;
-    padding: 0px 0 0 10px;
-    height: 30px;
-    border-radius: 4px;
-    &:focus-visible {
-      outline: 2px solid #a5addc;
-    }
   }
 }
+
 label {
   font-size: 15px;
   font-weight: bold;
@@ -233,40 +253,38 @@ label {
     background: transparent;
   }
 }
-
-.v-progress-circular {
-  position: absolute;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
+.prog {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
 }
+
 .progress {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 30px;
+  padding: 10px;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   .v-btn:hover {
-    color: #3f51b5;
+    color: #f44336;
   }
 }
 .flex-session {
   display: flex;
   flex-direction: column;
+  align-items: center;
   div {
     font-weight: 500;
     font-size: 19px;
-    color: #2a3053;
+    color: #202020;
   }
 }
 .session {
   font-size: 17px;
-  text-shadow: 0px 2px 3px #b5b5b5;
   display: block;
-  color: #151b3a;
+  color: #202020;
   padding: 0 0 10px;
   font-weight: bold;
 }
