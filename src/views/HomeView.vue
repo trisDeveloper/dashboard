@@ -91,7 +91,7 @@ export default {
       .flex2 {
         flex: 40%;
         order: 1;
-        height: calc(100% - 50px);
+        height: calc(100% - 25px);
       }
     }
     div:nth-child(1) {
