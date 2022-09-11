@@ -1,9 +1,11 @@
 <template>
   <v-app>
     <SideMenu />
-    <v-main>
-      <router-view />
-    </v-main>
+    <v-container>
+      <v-main>
+        <router-view />
+      </v-main>
+    </v-container>
   </v-app>
 </template>
 
@@ -20,11 +22,15 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.v-app {
-  max-width: 1440px;
+#app {
+  background-image: url("./assets/backdashboard.png");
+  background-size: cover;
+  background-position: left;
 }
-.v-main {
-  margin-top: 40px;
-  max-width: 1140px;
+
+@media (min-width: 1904px) {
+  .container {
+    max-width: 1185px;
+  }
 }
 </style>

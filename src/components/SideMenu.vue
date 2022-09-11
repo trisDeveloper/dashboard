@@ -59,12 +59,12 @@ export default {
   left: 10px;
   top: 10px;
   padding: 10px;
-  background: #ff75a400;
-  border: 1px solid #e91e63;
+  background: #dadada5e;
+  border: 1px solid #052251;
   z-index: 3;
   .v-btn--icon.v-size--default .v-icon,
   .v-icon.v-icon {
-    color: #e91e63;
+    color: #052251;
   }
 }
 .v-list-item__content,
@@ -74,7 +74,8 @@ export default {
   color: white;
 }
 .v-navigation-drawer {
-  background: #070e36;
+  background: #684f50;
+  position: fixed;
 }
 .v-card {
   height: 100vh;

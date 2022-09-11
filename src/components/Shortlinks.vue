@@ -4,9 +4,9 @@
       <template v-slot:activator="{ on, attrs }">
         <div class="btn-div">
           <v-btn
-            color="primary"
+            color="#a47778"
             :style="{
-              maxWidth: '100%',
+              width: '100%',
             }"
             dark
             v-bind="attrs"
@@ -50,12 +50,10 @@
         :style="{
           padding: '0 0 0 5px',
           margin: '0px !important',
-          maxWidth: '100px',
           width: '100%',
           justifyContent: 'space-between',
         }"
-        outlined
-        color="#9E9E9E"
+        color="#ffe8e9"
       >
         <a :href="link.urlpath" target="_blank" :title="link.name" class="link">
           <img
@@ -184,14 +182,13 @@ export default {
   display: grid;
   flex-wrap: wrap;
   position: relative;
-  height: 150px;
+  height: 158px;
   grid-template-columns: repeat(auto-fit, minmax(107px, 1fr));
   max-width: 370px;
   min-width: 260px;
-  margin: 10px;
   padding: 10px;
   overflow: auto;
-  border: 1px solid #ccc;
+  background-color: #052251;
   flex-direction: row;
   .btn-div {
     padding: 5px;
@@ -201,6 +198,7 @@ export default {
   .link {
     display: flex;
     color: #1c2b32;
+
     width: calc(100% - 18px);
     gap: 1px;
     font-size: 11px;

@@ -5,7 +5,7 @@
         fill-dot
         class="white--text mb-12"
         :style="{ alignItems: 'center' }"
-        color="orange"
+        color="#3F51B5"
         large
       >
         <template v-slot:icon>
@@ -43,21 +43,21 @@
               outlined
               fab
               small
-              color="teal"
+              color="#3F51B5"
               v-bind="attrs"
               v-on="on"
               v-model="time"
             >
-              <v-icon color="teal">mdi-plus</v-icon>
+              <v-icon color="#3F51B5">mdi-plus</v-icon>
             </v-btn>
           </template>
           <!--time picker-->
           <v-time-picker v-if="modal2" format="24hr" v-model="time" full-width>
             <v-spacer></v-spacer>
-            <v-btn text color="primary" @click="modal2 = false"> Cancel </v-btn>
+            <v-btn text color="#3F51B5" @click="modal2 = false"> Cancel </v-btn>
             <v-btn
               text
-              color="primary"
+              color="#3F51B5"
               @click="$refs.dialog.save(time), comment()"
             >
               OK
@@ -141,6 +141,7 @@
             <div class="checkbox">
               <v-checkbox
                 v-model="event.active"
+                color="indigo darken-3"
                 @click="checking()"
               ></v-checkbox>
             </div>
@@ -218,9 +219,12 @@ export default {
 
 <style lang="scss" scoped>
 .todo {
-  border: 1px solid #ccc;
   max-width: 600px;
-  margin: 10px;
+  height: calc(100vh - 300px);
+  min-height: 600px;
+  overflow: auto;
+  font-family: cursive;
+  background-color: #fff2e7;
 }
 .v-timeline-item::v-deep .v-timeline-item__body {
   display: flex;

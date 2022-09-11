@@ -201,13 +201,11 @@ export default {
   height: 115px;
   max-width: 350px;
   min-width: 260px;
-  border-radius: 8px;
   justify-content: space-between;
   background-image: url("./../assets/skymorning.png");
   background-position: bottom;
   background-size: cover;
   background-repeat: no-repeat;
-  margin: 10px;
   color: white;
   transition: all 1s;
   text-shadow: 0 0 3px #00467eb0;

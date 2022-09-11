@@ -1,8 +1,8 @@
 <template>
   <iframe
     style="border-radius: 8px"
-    src="https://open.spotify.com/embed/playlist/1LJzv7HlPZOtKXhTEsZFrn?utm_source=generator"
-    width="350"
+    src="https://open.spotify.com/embed/playlist/37i9dQZF1DX3rxVfibe1L0?utm_source=generator"
+    width="100%"
     height="80"
     frameBorder="0"
     allowfullscreen=""

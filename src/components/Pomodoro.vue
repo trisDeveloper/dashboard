@@ -43,7 +43,7 @@
             class="ma-2 start"
             outlined
             :disabled="!valid"
-            color="#f44336"
+            color="#12258b"
             @click="validate(), (e1 = 2)"
           >
             Start
@@ -57,7 +57,7 @@
             :size="130"
             :width="5"
             :value="value"
-            color="#f44336"
+            color="#12258b"
           >
             <div class="flex-session">
               <div class="session">{{ label }}</div>
@@ -218,11 +218,12 @@ export default {
   border-radius: 0px !important;
 }
 .pomorodo {
-  margin: 10px;
   max-width: 100%;
   height: 250px;
-  border: 1px solid#ccc;
+  background-image: url("./../assets/Screenshot from 2022-09-10 23-27-01.png");
   padding: 10px;
+  background-size: cover;
+  background-position: center;
 }
 .v-form {
   width: 100%;
@@ -268,7 +269,7 @@ label {
   justify-content: center;
   align-items: center;
   .v-btn:hover {
-    color: #f44336;
+    color: #12258b;
   }
 }
 .flex-session {
