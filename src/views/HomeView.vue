@@ -31,6 +31,11 @@ export default {
     Weather,
     Shortlinks,
   },
+  created() {
+    this.$store.state.userdata.id =
+      JSON.parse(localStorage.getItem("userid")) ||
+      this.$store.state.userdata.id;
+  },
 };
 </script>
 <style lang="scss" scoped>

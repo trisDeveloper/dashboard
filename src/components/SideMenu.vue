@@ -5,17 +5,28 @@
       @click.stop="drawer = !drawer"
     ></v-app-bar-nav-icon>
     <v-navigation-drawer v-model="drawer" absolute left temporary>
-      <v-list-item class="px-2">
-        <router-link to="/profile">
+      <v-list-item :style="{ justifyContent: 'space-between' }" class="px-2">
+        <router-link
+          v-if="!this.$store.state.isAuthenticated"
+          to="/login"
+          :style="{ display: 'flex', flexDirection: 'row' }"
+        >
+          <v-btn depressed large dark color="#890a01d4"> Sign Up </v-btn>
+        </router-link>
+        <router-link
+          v-if="this.$store.state.isAuthenticated"
+          to="/profile"
+          :style="{ display: 'flex', flexDirection: 'row' }"
+        >
           <v-list-item-avatar>
             <v-img
               src="https://randomuser.me/api/portraits/women/19.jpg"
             ></v-img>
           </v-list-item-avatar>
+          <v-list-item-title>{{ username }}</v-list-item-title>
         </router-link>
-        <v-list-item-title>{{ username }}</v-list-item-title>
 
-        <v-btn icon @click.stop="drawer = !drawer">
+        <v-btn icon @click.stop="drawer = !drawer" :style="{ order: '3' }">
           <v-icon>mdi-chevron-left</v-icon>
         </v-btn>
       </v-list-item>
@@ -40,6 +51,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data() {
     return {
@@ -48,8 +60,17 @@ export default {
         { title: "Home", icon: "mdi-view-dashboard", link: "/" },
         { title: "Work", icon: "mdi-domain", link: "/work" },
       ],
-      username: "Tris dev",
+      username: "",
+      logedin: true,
     };
+  },
+  created() {
+    axios
+      .get(`http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}`)
+      .then((response) => {
+        console.log(response.data);
+        this.username = response.data.username;
+      });
   },
 };
 </script>

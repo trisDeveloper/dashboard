@@ -158,7 +158,6 @@ export default {
     events: [],
     add: null,
     time: "00:00",
-
     colors: ["blue", "green", "orange", "pink", "purple"],
     modal2: false,
     snackbar: false,

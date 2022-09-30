@@ -19,6 +19,21 @@ export default {
   data: () => ({
     //
   }),
+  created() {
+    this.$store.state.userdata.id =
+      JSON.parse(localStorage.getItem("userid")) ||
+      this.$store.state.userdata.id;
+
+    if (localStorage.getItem("userid")) {
+      this.$store.state.userdata.id = JSON.parse(
+        localStorage.getItem("userid")
+      );
+      this.$store.state.isAuthenticated = true;
+    } else {
+      this.$store.state.userdata.id = "";
+      this.$store.state.isAuthenticated = false;
+    }
+  },
 };
 </script>
 <style lang="scss" scoped>
@@ -27,7 +42,12 @@ export default {
   background-size: cover;
   background-position: left;
 }
-
+.container {
+  min-height: 100vh;
+}
+.v-main {
+  min-height: 100%;
+}
 @media (min-width: 1904px) {
   .container {
     max-width: 1185px;
