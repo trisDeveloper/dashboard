@@ -20,7 +20,7 @@
         ></v-text-field>
         <v-text-field
           :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
-          :rules="[rules.required, rules.min]"
+          :rules="passwordRules"
           :type="show ? 'text' : 'password'"
           name="input-10-2"
           label="Password"
@@ -58,38 +58,71 @@ export default {
     return {
       show: false,
       password: "",
-      rules: {
-        required: (value) => !!value || "Required.",
-        min: (v) => v.length >= 8 || "Min 8 characters",
-        emailMatch: () => `The email and password you entered don't match`,
-      },
+      passwordRules: [
+        (value) => !!value || "Required.",
+        (v) => v.length >= 8 || "Min 8 characters",
+      ],
       valid: true,
       email: "",
+      emails: [],
       emailRules: [
         (v) => !!v || "E-mail is required",
         (v) => /.+@.+\..+/.test(v) || "E-mail must be valid",
+        (v) =>
+          (v && this.emails.map((a) => a.email).indexOf(this.email) >= 0) ||
+          "this email is not existing, try agian or sign up",
       ],
       select: null,
     };
   },
 
-  mounted() {},
-
+  created() {
+    this.checkemail();
+  },
   methods: {
     async validate() {
       this.$refs.form.validate();
-      if (this.name && this.password && this.email) {
-        axios.defaults.headers.common["Authorization"] = "";
-        localStorage.removeItem("token");
-        // const formData = {
-        //   username: this.name,
-        //   email: this.email,
-        //   password: this.password,
-        // };
-        // axios.post("http://127.0.0.1:8000/api/todo/", formData).then(() => {
-        //   this.$router.push("/");
-        // });
+      if (this.password && this.email) {
+        let emailId =
+          this.emails[this.emails.map((a) => a.email).indexOf(this.email)].id;
+        await axios
+          .get(`http://127.0.0.1:8000/api/users/${emailId}`)
+          .then((response) => {
+            if (response.data.password === this.password) {
+              this.$store.state.userdata.id = response.data.id;
+              localStorage.setItem(
+                "userid",
+                JSON.stringify(this.$store.state.userdata.id)
+              );
+              this.$store.state.userdata.id =
+                JSON.parse(localStorage.getItem("userid")) ||
+                this.$store.state.userdata.id;
+              this.$store.state.isAuthenticated = true;
+              window.location.replace("/dashboard");
+            } else {
+              this.passwordRules = [
+                (value) => !!value || "Required.",
+                (v) => v.length >= 8 || "Min 8 characters",
+                (v) =>
+                  response.data.password == v ||
+                  `The email and password you entered don't match`,
+              ];
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
       }
+    },
+    checkemail() {
+      axios
+        .get("http://127.0.0.1:8000/api/users/")
+
+        .then((response) => {
+          this.emails = response.data.map((a) => {
+            return { email: a.email, id: a.id };
+          });
+        });
     },
   },
 };

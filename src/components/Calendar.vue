@@ -53,13 +53,12 @@ export default {
   data: () => ({
     focus: "",
     type: "month",
-
     selectedEvent: {},
     selectedElement: null,
     selectedOpen: false,
     events: [
       {
-        name: "Event 1",
+        name: "app start",
         start: "2022-09-10T02:00:00",
         end: "2022-09-10T04:00:00",
         timed: true,

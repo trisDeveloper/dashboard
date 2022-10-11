@@ -60,7 +60,7 @@
             color="#12258b"
           >
             <div class="flex-session">
-              <div class="session">{{ label }}</div>
+              <div class="session">{{ label }} #{{ session1 + 1 }}</div>
               <div>
                 {{ 10 > minutes ? "0" + minutes : minutes }} :
                 {{ 10 > seconds ? "0" + seconds : seconds }}
@@ -115,17 +115,17 @@ export default {
       focusrules: [
         (value) => !!value || "Required.",
         (value) => value <= 60 || "Max 120 minutes",
-        (value) => value >= 1 || "Min 25 minutes",
+        (value) => value >= 5 || "Min 5 minutes",
       ],
       restrules: [
         (value) => !!value || "Required.",
         (value) => value <= 15 || "Max 15 minutes",
-        (value) => value >= 1 || "Min 3 minutes",
+        (value) => value >= 1 || "Min 1 minutes",
       ],
       longrestrules: [
         (value) => !!value || "Required.",
         (value) => value <= 60 || "Max 120 minutes",
-        (value) => value >= 1 || "Min 10 minutes",
+        (value) => value >= 1 || "Min 1 minutes",
       ],
     };
   },
@@ -160,15 +160,16 @@ export default {
       if (this.label === "Focus" && this.session1 < 3) {
         this.setnotification("Focus", "take a short rest");
         this.shortresting();
-        this.session1++;
       } else if (this.label === "Rest") {
         this.setnotification("Rest", "focus");
+        this.session1++;
         this.focusing();
       } else if (this.label === "Focus" && this.session1 === 3) {
         this.setnotification("Focus", "take a long rest");
         this.longresting();
       } else if (this.label === "Long Rest") {
         this.setnotification("Long Rest", "focus");
+        this.session1 = 0;
         this.focusing();
       }
     },
@@ -202,7 +203,7 @@ export default {
       if (this.label === "Focus") {
         this.focusing();
       } else if (this.label === "Rest") {
-        this.longresting();
+        this.shortresting();
       } else if (this.label === "Long Rest") {
         this.longresting();
       }

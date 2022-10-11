@@ -8,17 +8,9 @@ export default new Vuex.Store({
     isAuthenticated: false,
     userdata: {
       id: "",
-      events: [],
-      links: [],
-      city: "",
     },
   },
-  mutations: {
-    // removeToken(state) {
-    //   state.token = "";
-    //   state.isAuthenticated = false;
-    // },
-  },
+  mutations: {},
   actions: {},
   modules: {},
 });

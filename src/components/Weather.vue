@@ -128,7 +128,24 @@ export default {
     };
   },
   created() {
-    this.weather = JSON.parse(localStorage.getItem("weather")) || this.weather;
+    if (this.$store.state.userdata.id > 0) {
+      axios
+        .get(`http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}`)
+        .then((response) => {
+          const city = response.data.city;
+          return fetch(
+            `${this.url_base}weather?q=${city}&units=metric&APPID=${this.api_key}`
+          );
+        })
+        .then((res) => {
+          return res.json();
+        })
+        .then(this.setResults)
+        .then(this.checking);
+    } else {
+      this.weather =
+        JSON.parse(localStorage.getItem("weather")) || this.weather;
+    }
   },
 
   mounted() {
@@ -172,6 +189,13 @@ export default {
     },
     setResults(results) {
       this.weather = results;
+      const formData = {
+        city: this.weather.name,
+      };
+      axios.patch(
+        `http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}/`,
+        formData
+      );
     },
     citysearch() {
       // Simulated ajax query

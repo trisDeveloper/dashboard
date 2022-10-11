@@ -9,7 +9,7 @@
         large
       >
         <template v-slot:icon>
-          <span>TB</span>
+          {{ username.charAt(0).toUpperCase() }}
         </template>
         <v-text-field
           v-model="add"
@@ -72,7 +72,7 @@
       <v-slide-x-transition group>
         <v-timeline-item
           v-for="(event, index) in events"
-          :key="event.id"
+          :key="event.todoid"
           class="mb-4"
           :color="event.color"
           small
@@ -88,7 +88,7 @@
                   v-on="on"
                   class="content"
                   :style="
-                    event.active
+                    event.done
                       ? {
                           textDecoration: 'line-through',
                           color: '#888',
@@ -104,7 +104,7 @@
                 <v-toolbar :color="event.color" dark>
                   <v-toolbar-title v-html="event.start"></v-toolbar-title>
                   <v-spacer></v-spacer>
-                  <v-btn icon v-on:click="deleted(index)">
+                  <v-btn icon v-on:click="deleted(index, event.todoid)">
                     <v-icon>mdi-trash-can-outline</v-icon>
                   </v-btn>
                 </v-toolbar>
@@ -140,9 +140,9 @@
             </v-dialog>
             <div class="checkbox">
               <v-checkbox
-                v-model="event.active"
+                v-model="event.done"
                 color="indigo darken-3"
-                @click="checking()"
+                @click="donetask(event)"
               ></v-checkbox>
             </div>
           </v-row>
@@ -153,6 +153,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data: () => ({
     events: [],
@@ -161,6 +162,7 @@ export default {
     colors: ["blue", "green", "orange", "pink", "purple"],
     modal2: false,
     snackbar: false,
+    username: "",
     timeout: 3000,
     nonce: 0,
   }),
@@ -171,6 +173,22 @@ export default {
     },
   },
   created() {
+    if (this.$store.state.userdata.id > 0) {
+      axios
+        .get(`http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}`)
+        .then((response) => {
+          this.username = response.data.username;
+        });
+
+      axios.get(`http://127.0.0.1:8000/api/todos/`).then((response) => {
+        this.events = response.data
+          .filter((i) => {
+            return i.userid == this.$store.state.userdata.id;
+          })
+          .sort((a, b) => (a.start > b.start ? 1 : b.start > a.start ? -1 : 0));
+      });
+    }
+
     this.events = JSON.parse(localStorage.getItem("events")) || this.events;
     this.nonce = JSON.parse(localStorage.getItem("nonced")) || this.nonce;
   },
@@ -178,18 +196,47 @@ export default {
   methods: {
     comment() {
       if (this.add) {
-        this.events.push({
-          id: this.nonce++,
-          name: this.add,
-          newname: this.add,
-          start: this.time,
-          color: this.colors[Math.floor(Math.random() * 5)],
-          done: false,
-          dialog: false,
-        });
-        this.events = this.events.sort((a, b) =>
-          a.start > b.start ? 1 : b.start > a.start ? -1 : 0
-        );
+        if (this.$store.state.userdata.id > 0) {
+          const formData = {
+            userid: this.$store.state.userdata.id,
+            name: this.add,
+            newname: this.add,
+            start: this.time,
+            color: this.colors[Math.floor(Math.random() * 5)],
+            done: false,
+            dialog: false,
+          };
+          axios
+            .post(`http://127.0.0.1:8000/api/todos/`, formData)
+            .then((response) => {
+              this.events.push({
+                todoid: response.data.todoid,
+                name: response.data.name,
+                newname: response.data.newname,
+                start: response.data.start,
+                color: response.data.color,
+                done: response.data.done,
+                dialog: response.data.dailog,
+              });
+              this.events = this.events.sort((a, b) =>
+                a.start > b.start ? 1 : b.start > a.start ? -1 : 0
+              );
+            });
+        } else {
+          this.events.push({
+            todoid: this.nonce++,
+            name: this.add,
+            newname: this.add,
+            start: this.time,
+            color: this.colors[Math.floor(Math.random() * 5)],
+            done: false,
+            dialog: false,
+          });
+          this.events = this.events.sort((a, b) =>
+            a.start > b.start ? 1 : b.start > a.start ? -1 : 0
+          );
+        }
+
         localStorage.setItem("events", JSON.stringify(this.events));
         localStorage.setItem("nonced", JSON.stringify(this.nonce));
         this.add = null;
@@ -201,13 +248,38 @@ export default {
     checking() {
       localStorage.setItem("events", JSON.stringify(this.events));
     },
-    deleted(index) {
+    donetask(event) {
+      if (this.$store.state.userdata.id > 0) {
+        const formData = {
+          done: event.done,
+        };
+        axios
+          .patch(`http://127.0.0.1:8000/api/todos/${event.todoid}/`, formData)
+          .then(() => {
+            this.checking();
+          });
+      } else {
+        this.checking();
+      }
+    },
+    deleted(index, todoid) {
       this.events.splice(index, 1);
+      if (this.$store.state.userdata.id > 0) {
+        axios.delete(`http://127.0.0.1:8000/api/todos/${todoid}`);
+      }
       localStorage.setItem("events", JSON.stringify(this.events));
     },
     checknewname(event) {
       if (event.newname) {
         (event.dialog = false), (event.name = event.newname), this.checking();
+        if (this.$store.state.userdata.id > 0) {
+          const formData = {
+            name: event.newname,
+          };
+          axios
+            .patch(`http://127.0.0.1:8000/api/todos/${event.todoid}/`, formData)
+            .then(() => {});
+        }
       } else {
         this.snackbar = true;
       }

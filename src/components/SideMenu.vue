@@ -18,10 +18,17 @@
           to="/profile"
           :style="{ display: 'flex', flexDirection: 'row' }"
         >
-          <v-list-item-avatar>
-            <v-img
-              src="https://randomuser.me/api/portraits/women/19.jpg"
-            ></v-img>
+          <v-list-item-avatar
+            color="#ebe8e4"
+            :style="{ fontSize: '35px', color: '#b08f88' }"
+          >
+            <img
+              v-if="avatar"
+              :src="avatar"
+              :style="{ objectFit: 'cover' }"
+              :alt="username"
+            />
+            {{ avatar ? "" : username.charAt(0).toUpperCase() }}
           </v-list-item-avatar>
           <v-list-item-title>{{ username }}</v-list-item-title>
         </router-link>
@@ -58,9 +65,10 @@ export default {
       drawer: null,
       items: [
         { title: "Home", icon: "mdi-view-dashboard", link: "/" },
-        { title: "Work", icon: "mdi-domain", link: "/work" },
+        //{ title: "Work", icon: "mdi-domain", link: "/work" },
       ],
       username: "",
+      avatar: null,
       logedin: true,
     };
   },
@@ -68,8 +76,8 @@ export default {
     axios
       .get(`http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}`)
       .then((response) => {
-        console.log(response.data);
         this.username = response.data.username;
+        this.avatar = response.data.userimage;
       });
   },
 };

@@ -97,7 +97,6 @@ export default {
   },
   created() {
     this.checkemail();
-    console.log(this.joindate);
     this.$store.state.userdata.id =
       JSON.parse(localStorage.getItem("userid")) ||
       this.$store.state.userdata.id;
@@ -129,7 +128,7 @@ export default {
               JSON.parse(localStorage.getItem("userid")) ||
               this.$store.state.userdata.id;
             this.$store.state.isAuthenticated = true;
-            window.location.replace("/");
+            window.location.replace("/dashboard");
           })
           .catch((error) => {
             console.log(error);

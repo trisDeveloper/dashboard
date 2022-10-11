@@ -45,7 +45,7 @@
               ></v-file-input>
               <v-list-item-title>Change picture</v-list-item-title>
             </v-list-item>
-            <v-list-item link>
+            <v-list-item @click="deleteavatar" link>
               <v-list-item-title>delete picture</v-list-item-title>
             </v-list-item>
           </v-list>
@@ -157,7 +157,19 @@
         </div>
       </div>
       <div class="delete">
-        <h3>Delete Profile</h3>
+        <h3>Log Out</h3>
+        <div class="deletewarn">
+          If you log out, you can access your account, profile, Todos and data
+          at any time after logging in again.
+        </div>
+        <div class="buttons">
+          <v-btn depressed large dark color="#6a4e48" @click="logout()">
+            Log out
+          </v-btn>
+        </div>
+      </div>
+      <div class="delete">
+        <h3>Delete Account</h3>
         <div class="deletewarn">
           When you delete your account, your profile, Todos, Data will be
           removed. And you will not be able to sign in until you create a new
@@ -165,7 +177,13 @@
           account
         </div>
         <div class="buttons">
-          <v-btn depressed large dark color="#890a01d4">
+          <v-btn
+            depressed
+            large
+            dark
+            color="#890a01d4"
+            @click="deleteaccount()"
+          >
             Delete the account
           </v-btn>
         </div>
@@ -432,7 +450,6 @@ export default {
     axios
       .get(`http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}`)
       .then((response) => {
-        console.log(response.data);
         this.username = response.data.username;
         this.password = response.data.password;
         this.avatar = response.data.userimage;
@@ -490,7 +507,6 @@ export default {
       axios
         .get(`http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}`)
         .then((response) => {
-          console.log(response.data);
           this.username = response.data.username;
           this.password = response.data.password;
           this.email = response.data.email;
@@ -503,20 +519,17 @@ export default {
     },
     async appendFile() {
       let formData = new FormData();
-      formData.append("file", this.avatar);
-      console.log(formData, this.avatar);
-      const fileData = {
-        userimage: formData,
-        username: this.username,
-        password: this.password,
-        birthday: this.birthday,
-        email: this.email,
-        country: this.country,
-      };
+      formData.append("userimage", this.avatar);
+      formData.append("username", this.username);
+      formData.append("password", this.password);
+      formData.append("birthday", this.birthday);
+      formData.append("email", this.email);
+      formData.append("country", this.country);
+
       await axios
         .put(
           `http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}/`,
-          fileData,
+          formData,
           {
             headers: {
               "Content-Type": "multipart/form-data",
@@ -525,51 +538,74 @@ export default {
           }
         )
         .then((response) => {
-          console.log(response.data);
+          this.username = response.data.username;
+          this.password = response.data.password;
+          this.avatar = response.data.userimage;
+          this.email = response.data.email;
+          this.birthday = response.data.birthday;
         })
         .catch((error) => {
           console.log(error);
         });
+    },
+    async deleteavatar() {
+      let formData = new FormData();
+      formData.append("userimage", "");
+      formData.append("username", this.username);
+      formData.append("password", this.password);
+      formData.append("birthday", this.birthday);
+      formData.append("email", this.email);
+      formData.append("country", this.country);
 
-      // if (this.avatar) {
-      //   const avatarData = new FormData();
-      //   avatarData.append("file", this.avatar);
-      //   avatarData.append("name", this.avatar.name);
-      //   const formData = {
-      //     userimage: avatarData,
-      //     username: this.username,
-      //     password: this.password,
-      //     birthday: this.birthday,
-      //     email: this.email,
-      //   };
-      //   await apiClient
-      //     .put("", formData)
-      //     .then((response) => {
-      //       console.log("success!" + response.data);
-      //       getStoreDoc();
-      //     })
-      //     .catch((error) => {
-      //       console.log(error);
-      //     });
-      // const formData = {
-      //   userimage: avatarData,
-      //   username: this.username,
-      //   password: this.password,
-      //   birthday: this.birthday,
-      //   email: this.email,
-      // };
-      // await axios
-      //   .put(
-      //     `http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}/`,
-      //     formData
-      //   )
-      //   .then((response) => {
-      //     this.avatar = response.data.userimage;
-      //     this.username = response.data.username;
-      //     this.password = response.data.password;
-      //     this.email = response.data.email;
-      //   });
-      //}
+      await axios
+        .put(
+          `http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}/`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+              "X-CSRFToken": "{{ csrf_token }}",
+            },
+          }
+        )
+        .then((response) => {
+          this.username = response.data.username;
+          this.password = response.data.password;
+          this.avatar = response.data.userimage;
+          this.email = response.data.email;
+          this.birthday = response.data.birthday;
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    deleteaccount() {
+      axios
+        .delete(
+          `http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}/`
+        )
+
+        .then(() => {
+          this.$store.state.userdata.id = "";
+          localStorage.removeItem("userid");
+          localStorage.removeItem("events");
+          localStorage.removeItem("links");
+
+          this.$store.state.isAuthenticated = false;
+          window.location.replace("/dashboard");
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    },
+    logout() {
+      this.$store.state.userdata.id = "";
+      localStorage.removeItem("userid");
+      localStorage.removeItem("events");
+      localStorage.removeItem("links");
+
+      this.$store.state.isAuthenticated = false;
+      window.location.replace("/dashboard");
     },
   },
 };

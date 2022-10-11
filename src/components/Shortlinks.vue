@@ -85,7 +85,7 @@
                 <span class="text-h5">Edit link</span>
               </v-card-title>
               <v-spacer></v-spacer>
-              <v-btn icon v-on:click="deleted(index)">
+              <v-btn icon v-on:click="deleted(index, link.linkid)">
                 <v-icon>mdi-trash-can-outline</v-icon>
               </v-btn>
             </v-toolbar>
@@ -122,6 +122,7 @@
 </template>
 
 <script>
+import axios from "axios";
 export default {
   data: () => ({
     links: [],
@@ -130,24 +131,54 @@ export default {
     url: "https://",
     urlname: "",
     timeout: 3000,
+    newurlpath: "",
+    newname: "",
     rules: [(value) => !!value || "Required."],
     num: 0,
   }),
   created() {
+    if (this.$store.state.userdata.id > 0) {
+      axios.get(`http://127.0.0.1:8000/api/links/`).then((response) => {
+        this.links = response.data.filter((i) => {
+          return i.userid == this.$store.state.userdata.id;
+        });
+      });
+    }
     this.links = JSON.parse(localStorage.getItem("links")) || this.links;
     this.num = JSON.parse(localStorage.getItem("num")) || this.num;
   },
   methods: {
     add() {
       if (this.url) {
-        this.links.push({
-          id: this.num++,
-          name: this.urlname ? this.urlname : this.url,
-          newname: this.urlname,
-          urlpath: this.url,
-          newurlpath: this.url,
-          dialog: false,
-        });
+        if (this.$store.state.userdata.id > 0) {
+          const formData = {
+            userid: this.$store.state.userdata.id,
+            name: this.urlname ? this.urlname : this.url,
+            urlpath: this.url,
+            dialog: false,
+          };
+          axios
+            .post(`http://127.0.0.1:8000/api/links/`, formData)
+            .then((response) => {
+              this.links.push({
+                linkid: response.data.linkid,
+                name: response.data.name,
+                newname: response.data.name,
+                urlpath: response.data.urlpath,
+                newurlpath: response.data.urlpath,
+                dialog: response.data.dailog,
+              });
+            });
+        } else {
+          this.links.push({
+            id: this.num++,
+            name: this.urlname ? this.urlname : this.url,
+            newname: this.urlname,
+            urlpath: this.url,
+            newurlpath: this.url,
+            dialog: false,
+          });
+        }
 
         localStorage.setItem("links", JSON.stringify(this.links));
         localStorage.setItem("num", JSON.stringify(this.num));
@@ -159,16 +190,27 @@ export default {
     checking() {
       localStorage.setItem("links", JSON.stringify(this.links));
     },
-    deleted(index) {
+    deleted(index, linkid) {
       this.links.splice(index, 1);
+      if (this.$store.state.userdata.id > 0) {
+        axios.delete(`http://127.0.0.1:8000/api/links/${linkid}`);
+      }
       localStorage.setItem("links", JSON.stringify(this.links));
     },
     checknewname(link) {
       if (link.newurlpath) {
         (link.dialog = false),
           link.newname ? (link.name = link.newname) : link.name,
-          (link.urlpath = link.newurlpath),
-          this.checking();
+          (link.urlpath = link.newurlpath);
+        if (this.$store.state.userdata.id > 0) {
+          const formData = {
+            urlpath: link.newurlpath,
+          };
+          axios
+            .patch(`http://127.0.0.1:8000/api/links/${link.linkid}/`, formData)
+            .then(() => {});
+        }
+        this.checking();
       } else {
         this.snackbar = true;
       }
@@ -184,6 +226,7 @@ export default {
   position: relative;
   height: 158px;
   grid-template-columns: repeat(auto-fit, minmax(107px, 1fr));
+  grid-template-rows: 60px;
   max-width: 370px;
   min-width: 260px;
   padding: 10px;
