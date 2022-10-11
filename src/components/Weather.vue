@@ -193,7 +193,7 @@ export default {
         city: this.weather.name,
       };
       axios.patch(
-        `http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}/`,
+        `https://trisdev.pythonanywhere.com/api/users/${this.$store.state.userdata.id}/`,
         formData
       );
     },

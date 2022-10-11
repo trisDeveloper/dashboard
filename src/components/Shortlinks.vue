@@ -138,11 +138,13 @@ export default {
   }),
   created() {
     if (this.$store.state.userdata.id > 0) {
-      axios.get(`http://127.0.0.1:8000/api/links/`).then((response) => {
-        this.links = response.data.filter((i) => {
-          return i.userid == this.$store.state.userdata.id;
+      axios
+        .get(`https://trisdev.pythonanywhere.com/api/links/`)
+        .then((response) => {
+          this.links = response.data.filter((i) => {
+            return i.userid == this.$store.state.userdata.id;
+          });
         });
-      });
     }
     this.links = JSON.parse(localStorage.getItem("links")) || this.links;
     this.num = JSON.parse(localStorage.getItem("num")) || this.num;
@@ -158,7 +160,7 @@ export default {
             dialog: false,
           };
           axios
-            .post(`http://127.0.0.1:8000/api/links/`, formData)
+            .post(`https://trisdev.pythonanywhere.com/api/links/`, formData)
             .then((response) => {
               this.links.push({
                 linkid: response.data.linkid,
@@ -193,7 +195,7 @@ export default {
     deleted(index, linkid) {
       this.links.splice(index, 1);
       if (this.$store.state.userdata.id > 0) {
-        axios.delete(`http://127.0.0.1:8000/api/links/${linkid}`);
+        axios.delete(`https://trisdev.pythonanywhere.com/api/links/${linkid}`);
       }
       localStorage.setItem("links", JSON.stringify(this.links));
     },
@@ -207,7 +209,10 @@ export default {
             urlpath: link.newurlpath,
           };
           axios
-            .patch(`http://127.0.0.1:8000/api/links/${link.linkid}/`, formData)
+            .patch(
+              `https://trisdev.pythonanywhere.com/api/links/${link.linkid}/`,
+              formData
+            )
             .then(() => {});
         }
         this.checking();

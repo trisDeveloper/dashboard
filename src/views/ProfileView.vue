@@ -448,7 +448,9 @@ export default {
   },
   created() {
     axios
-      .get(`http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}`)
+      .get(
+        `https://trisdev.pythonanywhere.com/api/users/${this.$store.state.userdata.id}`
+      )
       .then((response) => {
         this.username = response.data.username;
         this.password = response.data.password;
@@ -491,7 +493,7 @@ export default {
         };
         await axios
           .put(
-            `http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}/`,
+            `https://trisdev.pythonanywhere.com/api/users/${this.$store.state.userdata.id}/`,
             formData
           )
           .then((response) => {
@@ -505,7 +507,9 @@ export default {
     },
     clear() {
       axios
-        .get(`http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}`)
+        .get(
+          `https://trisdev.pythonanywhere.com/api/users/${this.$store.state.userdata.id}`
+        )
         .then((response) => {
           this.username = response.data.username;
           this.password = response.data.password;
@@ -528,7 +532,7 @@ export default {
 
       await axios
         .put(
-          `http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}/`,
+          `https://trisdev.pythonanywhere.com/api/users/${this.$store.state.userdata.id}/`,
           formData,
           {
             headers: {
@@ -559,7 +563,7 @@ export default {
 
       await axios
         .put(
-          `http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}/`,
+          `https://trisdev.pythonanywhere.com/api/users/${this.$store.state.userdata.id}/`,
           formData,
           {
             headers: {
@@ -582,7 +586,7 @@ export default {
     deleteaccount() {
       axios
         .delete(
-          `http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}/`
+          `https://trisdev.pythonanywhere.com/api/users/${this.$store.state.userdata.id}/`
         )
 
         .then(() => {

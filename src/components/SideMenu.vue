@@ -74,7 +74,9 @@ export default {
   },
   created() {
     axios
-      .get(`http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}`)
+      .get(
+        `https://trisdev.pythonanywhere.com/api/users/${this.$store.state.userdata.id}`
+      )
       .then((response) => {
         this.username = response.data.username;
         this.avatar = response.data.userimage;

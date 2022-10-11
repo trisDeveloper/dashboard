@@ -175,12 +175,12 @@ export default {
   created() {
     if (this.$store.state.userdata.id > 0) {
       axios
-        .get(`http://127.0.0.1:8000/api/users/${this.$store.state.userdata.id}`)
+        .get(`https://trisdev.pythonanywhere.com/api/users/${this.$store.state.userdata.id}`)
         .then((response) => {
           this.username = response.data.username;
         });
 
-      axios.get(`http://127.0.0.1:8000/api/todos/`).then((response) => {
+      axios.get(`https://trisdev.pythonanywhere.com/api/todos/`).then((response) => {
         this.events = response.data
           .filter((i) => {
             return i.userid == this.$store.state.userdata.id;
@@ -207,7 +207,7 @@ export default {
             dialog: false,
           };
           axios
-            .post(`http://127.0.0.1:8000/api/todos/`, formData)
+            .post(`https://trisdev.pythonanywhere.com/api/todos/`, formData)
             .then((response) => {
               this.events.push({
                 todoid: response.data.todoid,
@@ -254,7 +254,7 @@ export default {
           done: event.done,
         };
         axios
-          .patch(`http://127.0.0.1:8000/api/todos/${event.todoid}/`, formData)
+          .patch(`https://trisdev.pythonanywhere.com/api/todos/${event.todoid}/`, formData)
           .then(() => {
             this.checking();
           });
@@ -265,7 +265,7 @@ export default {
     deleted(index, todoid) {
       this.events.splice(index, 1);
       if (this.$store.state.userdata.id > 0) {
-        axios.delete(`http://127.0.0.1:8000/api/todos/${todoid}`);
+        axios.delete(`https://trisdev.pythonanywhere.com/api/todos/${todoid}`);
       }
       localStorage.setItem("events", JSON.stringify(this.events));
     },
@@ -277,7 +277,7 @@ export default {
             name: event.newname,
           };
           axios
-            .patch(`http://127.0.0.1:8000/api/todos/${event.todoid}/`, formData)
+            .patch(`https://trisdev.pythonanywhere.com/api/todos/${event.todoid}/`, formData)
             .then(() => {});
         }
       } else {

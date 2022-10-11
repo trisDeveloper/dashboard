@@ -115,7 +115,7 @@ export default {
           country: "",
         };
         axios
-          .post("http://127.0.0.1:8000/api/users/", formData)
+          .post("https://trisdev.pythonanywhere.com/api/users/", formData)
 
           .then((response) => {
             this.theId = response.data.id;
@@ -137,7 +137,7 @@ export default {
     },
     checkemail() {
       axios
-        .get("http://127.0.0.1:8000/api/users/")
+        .get("https://trisdev.pythonanywhere.com/api/users/")
 
         .then((response) => {
           this.emails = response.data.map((a) => a.email);

@@ -86,7 +86,7 @@ export default {
         let emailId =
           this.emails[this.emails.map((a) => a.email).indexOf(this.email)].id;
         await axios
-          .get(`http://127.0.0.1:8000/api/users/${emailId}`)
+          .get(`https://trisdev.pythonanywhere.com/api/users/${emailId}`)
           .then((response) => {
             if (response.data.password === this.password) {
               this.$store.state.userdata.id = response.data.id;
@@ -116,7 +116,7 @@ export default {
     },
     checkemail() {
       axios
-        .get("http://127.0.0.1:8000/api/users/")
+        .get("https://trisdev.pythonanywhere.com/api/users/")
 
         .then((response) => {
           this.emails = response.data.map((a) => {
